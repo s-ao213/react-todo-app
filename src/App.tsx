@@ -48,7 +48,7 @@ const App = () => {
   // ▼▼ 追加
   const isValidTodoName = (name: string): string => {
     if (name.length < 2 || name.length > 32) {
-      return "2文字以上、32文字以内で入力してください ";
+      return "2文字以上、32文字以内で入力してください";
     } else {
       return "";
     }
