@@ -112,15 +112,12 @@ const Modal: React.FC<ModalProps> = ({
               <button
                 key={value}
                 onClick={() => setNewTodoPriority(value)}
-                className="focus:outline-none"
+                className={`transition-colors duration-200 focus:outline-none ${
+                  newTodoPriority >= value ? "text-yellow-500" : "text-gray-400" // 未選択時を薄いグレーに変更
+                }`}
               >
                 <FontAwesomeIcon
                   icon={faStarSolid}
-                  className={`transition-colors duration-200 ${
-                    newTodoPriority >= value
-                      ? "text-yellow-500"
-                      : "text-gray-400" // 未選択時を薄いグレーに変更
-                  }`}
                   style={{
                     fontSize: "24px",
                   }}

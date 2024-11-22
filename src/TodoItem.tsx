@@ -40,9 +40,9 @@ const TodoItem = ({ todo, updateIsDone, remove, onEdit }: Props) => {
             <FontAwesomeIcon
               key={value}
               icon={faStarSolid}
-              className={`text-yellow-500 ${
-                todo.priority >= value ? "" : "text-gray-300" // 未選択時はグレー
-              }`}
+              className={`${
+                todo.priority >= value ? "text-yellow-500" : "text-gray-300"
+              } transition-colors duration-200`}
               style={{ fontSize: "24px" }}
             />
           ))}

@@ -5,18 +5,22 @@ import WelcomeMessage from "./WelcomeMessage";
 import TodoList from "./TodoList";
 import { v4 as uuid } from "uuid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Modal from "./Modal"; // 新しいモーダルコンポーネントのインポート
+import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
+import Modal from "./Modal";
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [initialized, setInitialized] = useState(false);
-  const localStorageKey = "TodoApp";
-  const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの開閉状態を管理
-  const [editingTodo, setEditingTodo] = useState<Todo | null>(null); // 編集用タスクの管理
+  const [userName, setUserName] = useState("寝屋川タヌキ"); // ユーザー名の状態
+  const [isEditingName, setIsEditingName] = useState(false); // 名前編集モードの状態
+  const todoLocalStorageKey = "TodoApp";
+  const userNameKey = "TodoAppUserName"; // ユーザー名用のキー
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
+  // 既存のTodo読み込み用useEffect
   useEffect(() => {
-    const todoJsonStr = localStorage.getItem(localStorageKey);
+    const todoJsonStr = localStorage.getItem(todoLocalStorageKey);
     if (todoJsonStr && todoJsonStr !== "[]") {
       const storedTodos: Todo[] = JSON.parse(todoJsonStr);
       const convertedTodos = storedTodos.map((todo) => ({
@@ -27,20 +31,43 @@ const App = () => {
     } else {
       setTodos(initTodos);
     }
+
+    // ユーザー名の読み込み
+    const storedUserName = localStorage.getItem(userNameKey);
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+
     setInitialized(true);
   }, []);
 
+  // ユーザー名保存用のuseEffect
   useEffect(() => {
     if (initialized) {
-      localStorage.setItem(localStorageKey, JSON.stringify(todos));
+      localStorage.setItem(userNameKey, userName);
+    }
+  }, [userName, initialized]);
+
+  // 既存のTodo保存用useEffect
+  useEffect(() => {
+    if (initialized) {
+      localStorage.setItem(todoLocalStorageKey, JSON.stringify(todos));
     }
   }, [todos, initialized]);
+
+  const handleNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsEditingName(false);
+  };
 
   const uncompletedCount = todos.filter((todo) => !todo.isDone).length;
 
   const updateTodo = (updatedTodo: Todo) => {
+    console.log("Updating Todo:", updatedTodo); // デバッグ用ログ
     setTodos((prevTodos) =>
-      prevTodos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+      prevTodos.map(
+        (todo) => (todo.id === updatedTodo.id ? updatedTodo : todo) // IDが一致する場合のみ更新
+      )
     );
   };
 
@@ -85,20 +112,68 @@ const App = () => {
     setEditingTodo(null); // 編集用タスクをリセット
   };
 
+  const [sortBy, setSortBy] = useState<"deadline" | "priority" | null>(null); // 並び替え状態
+
+  // 未完了のタスクを並び替える関数
+  // getSortedTodos関数を修正
+  const getSortedTodos = (todos: Todo[]) => {
+    if (sortBy === "deadline") {
+      return todos.sort(
+        (a, b) =>
+          (a.deadline?.getTime() || Infinity) -
+          (b.deadline?.getTime() || Infinity)
+      );
+    }
+    if (sortBy === "priority") {
+      return todos.sort((a, b) => b.priority - a.priority);
+    }
+    return todos; // フィルタリングを削除
+  };
+
   return (
     <div className="mx-4 mt-10 max-w-2xl md:mx-auto">
       <h1 className="mb-4 text-2xl font-bold">TodoApp</h1>
       <div className="mb-4">
-        <WelcomeMessage
-          name="寝屋川タヌキ"
-          uncompletedCount={uncompletedCount}
-        />
+        <div className="flex items-center">
+          {isEditingName ? (
+            <form onSubmit={handleNameSubmit} className="flex items-center">
+              <input
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                className="rounded border border-gray-300 px-2 py-1"
+                autoFocus
+              />
+              <button
+                type="submit"
+                className="ml-2 rounded bg-indigo-500 px-3 py-1 text-white hover:bg-indigo-600"
+              >
+                保存
+              </button>
+            </form>
+          ) : (
+            <div className="flex items-center">
+              <WelcomeMessage
+                name={userName}
+                uncompletedCount={uncompletedCount}
+              />
+              <button
+                onClick={() => setIsEditingName(true)}
+                className="ml-2 rounded bg-gray-200 p-1 hover:bg-gray-300"
+              >
+                <FontAwesomeIcon icon={faEdit} className="text-gray-600" />
+                ユーザー名の変更
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <TodoList
-        todos={todos}
+        todos={getSortedTodos(todos)} // todos配列をそのまま渡す
         updateIsDone={updateIsDone}
         remove={remove}
-        onEdit={handleEditTodo} // タスク編集の処理
+        onEdit={handleEditTodo}
+        setSortBy={setSortBy}
       />
 
       <div className="mt-5 flex justify-between">
