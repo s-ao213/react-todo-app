@@ -4,14 +4,8 @@ import { initTodos } from "./initTodos";
 import WelcomeMessage from "./WelcomeMessage";
 import TodoList from "./TodoList";
 import { v4 as uuid } from "uuid";
-import dayjs from "dayjs";
-import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTriangleExclamation,
-  faPlus,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal"; // 新しいモーダルコンポーネントのインポート
 
 const App = () => {
@@ -19,6 +13,7 @@ const App = () => {
   const [initialized, setInitialized] = useState(false);
   const localStorageKey = "TodoApp";
   const [isModalOpen, setIsModalOpen] = useState(false); // モーダルの開閉状態を管理
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null); // 編集用タスクの管理
 
   useEffect(() => {
     const todoJsonStr = localStorage.getItem(localStorageKey);
@@ -43,6 +38,12 @@ const App = () => {
 
   const uncompletedCount = todos.filter((todo) => !todo.isDone).length;
 
+  const updateTodo = (updatedTodo: Todo) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+    );
+  };
+
   const updateIsDone = (id: string, value: boolean) => {
     const updatedTodos = todos.map((todo) => {
       if (todo.id === String(id)) {
@@ -58,11 +59,7 @@ const App = () => {
     setTodos(updatedTodos);
   };
 
-  const addNewTodo = (
-    name: string,
-    priority: number,
-    deadline: Date | null
-  ) => {
+  const addTodo = (name: string, priority: number, deadline: Date | null) => {
     const newTodo: Todo = {
       id: uuid(),
       name,
@@ -70,13 +67,22 @@ const App = () => {
       priority,
       deadline,
     };
-    const updatedTodos = [...todos, newTodo];
-    setTodos(updatedTodos);
+    setTodos((prevTodos) => [...prevTodos, newTodo]);
   };
 
   const removeCompletedTodos = () => {
     const updatedTodos = todos.filter((todo) => !todo.isDone);
     setTodos(updatedTodos);
+  };
+
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodo(todo);
+    setIsModalOpen(true); // モーダルを表示
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingTodo(null); // 編集用タスクをリセット
   };
 
   return (
@@ -88,7 +94,12 @@ const App = () => {
           uncompletedCount={uncompletedCount}
         />
       </div>
-      <TodoList todos={todos} updateIsDone={updateIsDone} remove={remove} />
+      <TodoList
+        todos={todos}
+        updateIsDone={updateIsDone}
+        remove={remove}
+        onEdit={handleEditTodo} // タスク編集の処理
+      />
 
       <div className="mt-5 flex justify-between">
         <button
@@ -111,8 +122,10 @@ const App = () => {
       {/* モーダルコンポーネントの追加 */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAddTodo={addNewTodo}
+        onClose={closeModal}
+        onAddTodo={addTodo}
+        onUpdateTodo={updateTodo}
+        editingTodo={editingTodo} // 編集用のタスクを渡す
       />
     </div>
   );

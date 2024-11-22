@@ -10,15 +10,36 @@ type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onAddTodo: (name: string, priority: number, deadline: Date | null) => void;
+  editingTodo: Todo | null; // 編集用タスク
+  onUpdateTodo: (updatedTodo: Todo) => void; // 更新用の関数
 };
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onAddTodo,
+  editingTodo,
+  onUpdateTodo,
+}) => {
   const [newTodoName, setNewTodoName] = React.useState("");
   const [newTodoPriority, setNewTodoPriority] = React.useState(3);
   const [newTodoDeadline, setNewTodoDeadline] = React.useState<Date | null>(
     null
   );
   const [newTodoNameError, setNewTodoNameError] = React.useState("");
+
+  // モーダルが開かれるときに初期化
+  React.useEffect(() => {
+    if (editingTodo) {
+      setNewTodoName(editingTodo.name);
+      setNewTodoPriority(editingTodo.priority); // 優先度をセット
+      setNewTodoDeadline(editingTodo.deadline);
+    } else {
+      setNewTodoName("");
+      setNewTodoPriority(3);
+      setNewTodoDeadline(null);
+    }
+  }, [editingTodo]);
 
   const closeModal = () => {
     setNewTodoName("");
@@ -35,13 +56,24 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
     return "";
   };
 
-  const handleAddTodo = () => {
+  const handleSubmit = () => {
     const err = isValidTodoName(newTodoName);
     if (err !== "") {
       setNewTodoNameError(err);
       return;
     }
-    onAddTodo(newTodoName, newTodoPriority, newTodoDeadline);
+
+    if (editingTodo) {
+      const updatedTodo: Todo = {
+        ...editingTodo,
+        name: newTodoName,
+        priority: newTodoPriority, // 優先度を更新
+        deadline: newTodoDeadline,
+      };
+      onUpdateTodo(updatedTodo); // 更新用関数を呼び出す
+    } else {
+      onAddTodo(newTodoName, newTodoPriority, newTodoDeadline);
+    }
     closeModal();
   };
 
@@ -49,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
         <h2 className="mb-4 text-center text-xl font-bold">
-          新しいタスクの追加
+          {editingTodo ? "タスクを編集" : "新しいタスクの追加"}
         </h2>
 
         {/* タスク名入力 */}
@@ -62,7 +94,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
             type="text"
             value={newTodoName}
             onChange={(e) => setNewTodoName(e.target.value)}
-            className={`w-full rounded border p-2 ${newTodoNameError ? "border-red-500" : "border-gray-300"}`}
+            className={`w-full rounded border p-2 ${
+              newTodoNameError ? "border-red-500" : "border-gray-300"
+            }`}
             placeholder="タスク名を入力"
           />
           {newTodoNameError && (
@@ -108,7 +142,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}
-            minDate={new Date()}
+            minDate={new Date()} // 今日の日付以降を選択可能
             popperClassName="custom-datepicker-popover"
             locale={ja} // 日本語ロケールを設定
           />
@@ -117,10 +151,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onAddTodo }) => {
         {/* ボタン */}
         <div className="mt-4 flex justify-end">
           <button
-            onClick={handleAddTodo}
+            onClick={handleSubmit} // 新規作成または更新を行う
             className="rounded bg-indigo-500 px-4 py-2 text-white transition duration-200 hover:bg-indigo-600"
           >
-            追加
+            {editingTodo ? "更新" : "追加"}
           </button>
           <button
             onClick={closeModal}

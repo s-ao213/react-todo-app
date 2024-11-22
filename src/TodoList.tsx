@@ -1,14 +1,16 @@
 import React from "react";
-import TodoItem from "./TodoItem"; // TodoItemをインポート
-import { Todo } from "./types"; // こちらのインポートが必要
+import TodoItem from "./TodoItem";
+import { Todo } from "./types";
 
 type Props = {
   todos: Todo[];
   updateIsDone: (id: string, value: boolean) => void;
   remove: (id: string) => void;
+  onEdit: (todo: Todo) => void; // onEdit を Props に追加
 };
 
-const TodoList = ({ todos, updateIsDone, remove }: Props) => {
+const TodoList = ({ todos, updateIsDone, remove, onEdit }: Props) => {
+  // onEdit を引数に追加
   const incompleteTodos = todos.filter((todo) => !todo.isDone);
   const completedTodos = todos.filter((todo) => todo.isDone);
 
@@ -22,6 +24,7 @@ const TodoList = ({ todos, updateIsDone, remove }: Props) => {
             todo={todo}
             updateIsDone={updateIsDone}
             remove={remove}
+            onEdit={onEdit} // onEdit を追加
           />
         ))}
       </div>
@@ -34,6 +37,7 @@ const TodoList = ({ todos, updateIsDone, remove }: Props) => {
             todo={todo}
             updateIsDone={updateIsDone}
             remove={remove}
+            onEdit={onEdit} // onEdit を追加
           />
         ))}
       </div>
