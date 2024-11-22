@@ -45,7 +45,7 @@ const App = () => {
 
   const updateIsDone = (id: string, value: boolean) => {
     const updatedTodos = todos.map((todo) => {
-      if (todo.id === id) {
+      if (todo.id === String(id)) {
         return { ...todo, isDone: value };
       }
       return todo;
@@ -54,7 +54,7 @@ const App = () => {
   };
 
   const remove = (id: string) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    const updatedTodos = todos.filter((todo) => todo.id !== String(id));
     setTodos(updatedTodos);
   };
 

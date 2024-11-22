@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ja } from "date-fns/locale";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons";
+import { Todo } from "./types"; // Todo型をtypesからインポート
 
 type ModalProps = {
   isOpen: boolean;
