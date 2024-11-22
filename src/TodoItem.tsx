@@ -3,70 +3,120 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTrash,
   faEdit,
-  faStar as faStarSolid,
+  faStar,
+  faClock,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
-import { Todo } from "./types"; // こちらのインポートが必要
+import { Todo } from "./types";
 
 type Props = {
   todo: Todo;
   updateIsDone: (id: string, value: boolean) => void;
   remove: (id: string) => void;
-  onEdit: (todo: Todo) => void; // onEditをPropsに追加
+  onEdit: (todo: Todo) => void;
 };
 
-const TodoItem = ({ todo, updateIsDone, remove, onEdit }: Props) => {
-  // onEditを引数に追加
+const TodoItem: React.FC<Props> = ({ todo, updateIsDone, remove, onEdit }) => {
   const isOverdue = todo.deadline && new Date(todo.deadline) < new Date();
+  const deadlineDate = todo.deadline ? new Date(todo.deadline) : null;
+  const timeLeft = deadlineDate
+    ? deadlineDate.getTime() - new Date().getTime()
+    : null;
+  const daysLeft = timeLeft
+    ? Math.ceil(timeLeft / (1000 * 60 * 60 * 24))
+    : null;
+  const isUrgent = daysLeft !== null && daysLeft <= 3 && !todo.isDone;
 
   return (
     <div
-      className={`mb-2 flex items-center justify-between rounded-lg p-4 shadow-md transition-shadow duration-200 hover:shadow-lg ${todo.isDone ? "bg-green-200" : isOverdue ? "border border-red-500 bg-red-100" : "bg-white"}`}
+      className={`
+        group relative flex items-center rounded-lg p-4 shadow 
+        transition-all duration-300
+        hover:-translate-y-1 hover:shadow-lg 
+        ${todo.isDone ? "bg-green-50" : "bg-white"}
+        ${isOverdue ? "border-l-4 border-red-500" : isUrgent ? "border-l-4 border-yellow-500" : "border-l-4 border-transparent"}
+        mobile:flex-col mobile:items-start mobile:space-y-2
+      `}
     >
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          checked={todo.isDone}
-          onChange={(e) => updateIsDone(String(todo.id), e.target.checked)}
-          className="mr-2 size-5 cursor-pointer accent-blue-600"
-        />
-        <span
-          className={`text-lg ${todo.isDone ? "text-green-800 line-through" : isOverdue ? "font-bold text-red-600" : "text-gray-800"}`}
-        >
-          {todo.name}
-        </span>
+      <div className="absolute -right-2 -top-2 flex space-x-1 rounded-full bg-white px-2 py-1 shadow-sm mobile:relative mobile:mb-2 mobile:self-end">
+        {[...Array(todo.priority)].map((_, i) => (
+          <FontAwesomeIcon key={i} icon={faStar} className="text-yellow-400" />
+        ))}
+      </div>
 
-        <div className="ml-4 flex">
-          {[1, 2, 3].map((value) => (
-            <FontAwesomeIcon
-              key={value}
-              icon={faStarSolid}
-              className={`${
-                todo.priority >= value ? "text-yellow-500" : "text-gray-300"
-              } transition-colors duration-200`}
-              style={{ fontSize: "24px" }}
-            />
-          ))}
+      <div className="flex w-full items-center space-x-4 mobile:w-full mobile:flex-col mobile:space-x-0 mobile:space-y-2">
+        {/* チェックボックス */}
+        <div className="relative mobile:self-start">
+          <input
+            type="checkbox"
+            checked={todo.isDone}
+            onChange={(e) => updateIsDone(String(todo.id), e.target.checked)}
+            className="size-6 cursor-pointer rounded-full border-2
+              transition-colors duration-200 focus:ring-2
+              focus:ring-indigo-500 mobile:size-5"
+          />
         </div>
 
-        <span className="ml-2 text-sm">
-          期限:{" "}
-          {todo.deadline ? new Date(todo.deadline).toLocaleString() : "なし"}
-        </span>
+        {/* タスク詳細 */}
+        <div className="grow mobile:w-full">
+          <p
+            className={`text-lg font-medium
+              transition-all duration-200 mobile:text-base
+              ${todo.isDone ? "text-gray-500 line-through" : "text-gray-800"}
+              ${isOverdue ? "text-red-600" : ""}
+            `}
+          >
+            {todo.name}
+          </p>
+
+          {deadlineDate && (
+            <div className="mt-1 flex items-center space-x-2 text-sm mobile:text-xs">
+              <FontAwesomeIcon
+                icon={isOverdue ? faExclamationTriangle : faClock}
+                className={`mobile:text-sm ${isOverdue ? "text-red-500" : "text-gray-400"}`}
+              />
+              <span
+                className={`
+      ${isOverdue ? "text-red-500" : isUrgent ? "text-yellow-600" : "text-gray-500"}
+    `}
+              >
+                {isOverdue && daysLeft !== null
+                  ? `期限切れ (${Math.abs(daysLeft)}日経過)`
+                  : daysLeft !== null
+                    ? `残り${daysLeft}日`
+                    : "期限なし"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* アクションボタン - モバイル時に常に表示 */}
+        <div
+          className="
+          flex space-x-2 
+          opacity-0 transition-opacity duration-200
+          group-hover:opacity-100 mobile:w-full mobile:justify-end mobile:opacity-100"
+        >
+          <button
+            onClick={() => onEdit(todo)}
+            className=" rounded-full bg-indigo-100 p-2 
+              text-indigo-600 transition-colors hover:bg-indigo-200 mobile:p-1.5
+              mobile:text-sm"
+            title="編集"
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+          <button
+            onClick={() => remove(String(todo.id))}
+            className="rounded-full bg-red-100 p-2 
+              text-red-600 transition-colors hover:bg-red-200 mobile:p-1.5
+              mobile:text-sm"
+            title="削除"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
       </div>
-      <button
-        onClick={() => onEdit(todo)}
-        className="ml-auto flex items-center rounded-md bg-yellow-500 px-3 py-1 text-sm font-bold text-white transition duration-200 hover:bg-yellow-600"
-      >
-        <FontAwesomeIcon icon={faEdit} />
-        編集
-      </button>
-      <button
-        onClick={() => remove(String(todo.id))}
-        className="ml-2 flex items-center rounded-md bg-red-500 px-3 py-1 text-sm font-bold text-white transition duration-200 hover:bg-red-600"
-      >
-        <FontAwesomeIcon icon={faTrash} className="mr-1" />
-        削除
-      </button>
     </div>
   );
 };

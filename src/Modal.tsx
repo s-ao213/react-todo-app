@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ja } from "date-fns/locale";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as faStarSolid } from "@fortawesome/free-solid-svg-icons";
-import { Todo } from "./types"; // Todo型をtypesからインポート
+import { Todo } from "./types";
 
 type ModalProps = {
   isOpen: boolean;
@@ -113,7 +113,7 @@ const Modal: React.FC<ModalProps> = ({
                 key={value}
                 onClick={() => setNewTodoPriority(value)}
                 className={`transition-colors duration-200 focus:outline-none ${
-                  newTodoPriority >= value ? "text-yellow-500" : "text-gray-400" // 未選択時を薄いグレーに変更
+                  newTodoPriority >= value ? "text-yellow-500" : "text-gray-400"
                 }`}
               >
                 <FontAwesomeIcon

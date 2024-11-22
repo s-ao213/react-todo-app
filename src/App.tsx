@@ -11,7 +11,7 @@ import Modal from "./Modal";
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [initialized, setInitialized] = useState(false);
-  const [userName, setUserName] = useState("寝屋川タヌキ"); // ユーザー名の状態
+  const [userName, setUserName] = useState("ユーザー名"); // ユーザー名の状態
   const [isEditingName, setIsEditingName] = useState(false); // 名前編集モードの状態
   const todoLocalStorageKey = "TodoApp";
   const userNameKey = "TodoAppUserName"; // ユーザー名用のキー
@@ -115,7 +115,6 @@ const App = () => {
   const [sortBy, setSortBy] = useState<"deadline" | "priority" | null>(null); // 並び替え状態
 
   // 未完了のタスクを並び替える関数
-  // getSortedTodos関数を修正
   const getSortedTodos = (todos: Todo[]) => {
     if (sortBy === "deadline") {
       return todos.sort(
@@ -131,7 +130,8 @@ const App = () => {
   };
 
   return (
-    <div className="mx-4 mt-10 max-w-2xl md:mx-auto">
+    <div className="xs:px-2 mx-4 mt-10 w-full max-w-2xl sm:px-4 md:mx-auto">
+      {" "}
       <h1 className="mb-4 text-2xl font-bold">TodoApp</h1>
       <div className="mb-4">
         <div className="flex items-center">
@@ -175,7 +175,6 @@ const App = () => {
         onEdit={handleEditTodo}
         setSortBy={setSortBy}
       />
-
       <div className="mt-5 flex justify-between">
         <button
           type="button"
@@ -193,7 +192,6 @@ const App = () => {
           タスクを追加
         </button>
       </div>
-
       {/* モーダルコンポーネントの追加 */}
       <Modal
         isOpen={isModalOpen}
