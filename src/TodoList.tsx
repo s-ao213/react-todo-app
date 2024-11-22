@@ -1,6 +1,6 @@
 import React from "react";
 import { Todo } from "./types";
-import TodoItem from "./TodoItem"; // ◀◀ 追加
+import TodoItem from "./TodoItem";
 
 type Props = {
   todos: Todo[];
@@ -8,25 +8,23 @@ type Props = {
   remove: (id: string) => void;
 };
 
-const TodoList = (props: Props) => {
-  const todos = props.todos;
-
+const TodoList = ({ todos, updateIsDone, remove }: Props) => {
   if (todos.length === 0) {
     return (
-      <div className="text-red-500">
+      <div className="p-4 text-center text-lg text-red-500">
         現在、登録されているタスクはありません。
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="flex flex-col space-y-4 p-4 md:p-8">
       {todos.map((todo) => (
         <TodoItem
           key={todo.id}
           todo={todo}
-          remove={props.remove}
-          updateIsDone={props.updateIsDone}
+          remove={remove}
+          updateIsDone={updateIsDone}
         />
       ))}
     </div>
