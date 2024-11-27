@@ -1,4 +1,5 @@
 import { Todo } from "./types";
+
 import { v4 as uuid } from "uuid";
 
 export const initTodos: Todo[] = [
@@ -8,6 +9,7 @@ export const initTodos: Todo[] = [
     isDone: false,
     priority: 2,
     deadline: new Date(2024, 10, 2, 17, 30),
+    category: "学校", // カテゴリー名に変更
   },
   {
     id: uuid(),
@@ -15,6 +17,7 @@ export const initTodos: Todo[] = [
     isDone: false,
     priority: 3,
     deadline: null,
+    category: "学校", // カテゴリー名に変更
   },
   {
     id: uuid(),
@@ -22,6 +25,7 @@ export const initTodos: Todo[] = [
     isDone: true,
     priority: 1,
     deadline: new Date(2024, 10, 11),
+    category: "学校", // カテゴリー名に変更
   },
   {
     id: uuid(),
@@ -29,5 +33,6 @@ export const initTodos: Todo[] = [
     isDone: true,
     priority: 2,
     deadline: null,
+    category: "仕事", // カテゴリー名に変更
   },
 ];

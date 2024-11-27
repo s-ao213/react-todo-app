@@ -7,7 +7,7 @@ import {
   faClock,
   faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
-import { Todo } from "./types";
+import { Todo, CategoryIcons } from "./types";
 
 type Props = {
   todo: Todo;
@@ -26,6 +26,8 @@ const TodoItem: React.FC<Props> = ({ todo, updateIsDone, remove, onEdit }) => {
     ? Math.ceil(timeLeft / (1000 * 60 * 60 * 24))
     : null;
   const isUrgent = daysLeft !== null && daysLeft <= 3 && !todo.isDone;
+  const categoryIcon =
+    CategoryIcons[todo.category as keyof typeof CategoryIcons];
 
   return (
     <div
@@ -60,13 +62,26 @@ const TodoItem: React.FC<Props> = ({ todo, updateIsDone, remove, onEdit }) => {
         {/* タスク詳細 */}
         <div className="grow mobile:w-full">
           <p
-            className={`text-lg font-medium
+            className={`flex items-center text-lg font-medium
               transition-all duration-200 mobile:text-base
               ${todo.isDone ? "text-gray-500 line-through" : "text-gray-800"}
               ${isOverdue ? "text-red-600" : ""}
             `}
           >
             {todo.name}
+            {todo.category && (
+              <span className="ml-2 flex items-center space-x-1 text-sm text-gray-500">
+                {CategoryIcons[todo.category as keyof typeof CategoryIcons] && (
+                  <FontAwesomeIcon
+                    icon={
+                      CategoryIcons[todo.category as keyof typeof CategoryIcons]
+                    }
+                    className="mr-1 text-gray-400"
+                  />
+                )}
+                <span>{todo.category}</span>
+              </span>
+            )}
           </p>
 
           {deadlineDate && (

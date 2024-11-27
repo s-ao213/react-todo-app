@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Todo } from "./types";
+import { Todo, Category } from "./types";
 import { initTodos } from "./initTodos";
 import WelcomeMessage from "./WelcomeMessage";
 import TodoList from "./TodoList";
@@ -9,6 +9,12 @@ import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 
 const App = () => {
+  // カテゴリーの定義を追加
+  const categories: Category[] = [
+    { id: "1", name: "仕事", icon: "briefcase" },
+    { id: "2", name: "学校", icon: "graduation-cap" },
+    { id: "3", name: "プライベート", icon: "home" },
+  ];
   const [todos, setTodos] = useState<Todo[]>([]);
   const [initialized, setInitialized] = useState(false);
   const [userName, setUserName] = useState("ユーザー名"); // ユーザー名の状態
@@ -86,13 +92,19 @@ const App = () => {
     setTodos(updatedTodos);
   };
 
-  const addTodo = (name: string, priority: number, deadline: Date | null) => {
+  const addTodo = (
+    name: string,
+    priority: number,
+    deadline: Date | null,
+    category: string
+  ) => {
     const newTodo: Todo = {
       id: uuid(),
       name,
       isDone: false,
       priority,
       deadline,
+      category, // 新しいプロパティを追加
     };
     setTodos((prevTodos) => [...prevTodos, newTodo]);
   };
@@ -199,6 +211,7 @@ const App = () => {
         onAddTodo={addTodo}
         onUpdateTodo={updateTodo}
         editingTodo={editingTodo} // 編集用のタスクを渡す
+        categories={categories} // カテゴリーリストを渡す
       />
     </div>
   );
