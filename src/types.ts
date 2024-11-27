@@ -1,5 +1,4 @@
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-
 import {
   faBriefcase,
   faGraduationCap,
@@ -17,12 +16,11 @@ export interface Category {
 
 export const CategoryIcons = {
   briefcase: faBriefcase,
-  仕事: faBriefcase, // カテゴリー名と一致させる
+  仕事: faBriefcase,
   "graduation-cap": faGraduationCap,
   学校: faGraduationCap,
   home: faHome,
   プライベート: faHome,
-  // 新しいアイコンを追加
   shopping: faShoppingCart,
   買い物: faShoppingCart,
   health: faHeartbeat,

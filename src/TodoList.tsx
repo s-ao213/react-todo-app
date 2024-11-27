@@ -18,6 +18,8 @@ type Props = {
   remove: (id: string) => void;
   onEdit: (todo: Todo) => void;
   setSortBy: (sortBy: "deadline" | "priority" | null) => void;
+  categories: Category[];
+  setCategories: (categories: Category[]) => void;
 };
 
 const TodoList: React.FC<Props> = ({
@@ -26,12 +28,14 @@ const TodoList: React.FC<Props> = ({
   remove,
   onEdit,
   setSortBy,
+  categories,
+  setCategories,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: "1", name: "仕事", icon: "briefcase" },
-    { id: "2", name: "学校", icon: "graduation-cap" },
-    { id: "3", name: "プライベート", icon: "home" },
-  ]);
+  // const [categories, setCategories] = useState<Category[]>([
+  //   { id: "1", name: "仕事", icon: "briefcase" },
+  //   { id: "2", name: "学校", icon: "graduation-cap" },
+  //   { id: "3", name: "プライベート", icon: "home" },
+  // ]);
 
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -54,12 +58,14 @@ const TodoList: React.FC<Props> = ({
         name: newCategoryName,
         icon: newCategoryIcon,
       };
-      setCategories([...categories, newCategory]);
+      const updatedCategories = [...categories, newCategory];
+      setCategories(updatedCategories); // 親コンポーネントのstate更新
       setIsAddCategoryModalOpen(false);
       setNewCategoryName("");
       setNewCategoryIcon("");
     }
   };
+  const categorySelectOptions = categories;
 
   const filteredTodos = todos.filter((todo) => {
     const matchesSearch = todo.name

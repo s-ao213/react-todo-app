@@ -9,12 +9,11 @@ import { faPlus, faEdit } from "@fortawesome/free-solid-svg-icons";
 import Modal from "./Modal";
 
 const App = () => {
-  // カテゴリーの定義を追加
-  const categories: Category[] = [
+  const [categories, setCategories] = useState<Category[]>([
     { id: "1", name: "仕事", icon: "briefcase" },
     { id: "2", name: "学校", icon: "graduation-cap" },
     { id: "3", name: "プライベート", icon: "home" },
-  ];
+  ]);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [initialized, setInitialized] = useState(false);
   const [userName, setUserName] = useState("ユーザー名"); // ユーザー名の状態
@@ -181,11 +180,13 @@ const App = () => {
         </div>
       </div>
       <TodoList
-        todos={getSortedTodos(todos)} // todos配列をそのまま渡す
+        todos={getSortedTodos(todos)}
         updateIsDone={updateIsDone}
         remove={remove}
         onEdit={handleEditTodo}
         setSortBy={setSortBy}
+        categories={categories}
+        setCategories={setCategories}
       />
       <div className="mt-5 flex justify-between">
         <button
