@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 export const initTodos: Todo[] = [
   {
     id: uuid(),
-    name: "解析2の宿題",
+    name: "解析2の課題",
     isDone: false,
     priority: 2,
     deadline: new Date(2024, 10, 2, 17, 30),
@@ -14,24 +14,24 @@ export const initTodos: Todo[] = [
   {
     id: uuid(),
     name: "TypeScriptの勉強 (復習)",
-    isDone: false,
+    isDone: true,
     priority: 3,
     deadline: null,
     category: "学校", // カテゴリー名に変更
   },
   {
     id: uuid(),
-    name: "基礎物理学3の宿題",
+    name: "部屋の掃除",
     isDone: true,
-    priority: 1,
+    priority: 2,
     deadline: new Date(2024, 10, 11),
-    category: "学校", // カテゴリー名に変更
+    category: "プライベート", // カテゴリー名に変更
   },
   {
     id: uuid(),
-    name: "図書の返却",
-    isDone: true,
-    priority: 2,
+    name: "シフト提出",
+    isDone: false,
+    priority: 1,
     deadline: null,
     category: "仕事", // カテゴリー名に変更
   },

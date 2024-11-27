@@ -22,6 +22,13 @@ export const CategoryIcons = {
   学校: faGraduationCap,
   home: faHome,
   プライベート: faHome,
+  // 新しいアイコンを追加
+  shopping: faShoppingCart,
+  買い物: faShoppingCart,
+  health: faHeartbeat,
+  健康: faHeartbeat,
+  travel: faPlane,
+  旅行: faPlane,
 };
 
 export interface Todo {

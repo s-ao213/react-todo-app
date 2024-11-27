@@ -240,23 +240,26 @@ const TodoList: React.FC<Props> = ({
             <div className="mb-4">
               <label className="mb-2 block">アイコンを選択</label>
               <div className="grid grid-cols-3 gap-2">
-                {Object.keys(CategoryIcons).map((iconName) => (
-                  <button
-                    key={iconName}
-                    onClick={() => setNewCategoryIcon(iconName)}
-                    className={`rounded p-2 ${
-                      newCategoryIcon === iconName
-                        ? "bg-indigo-500 text-white"
-                        : "bg-gray-200 text-gray-700"
-                    }`}
-                  >
-                    <FontAwesomeIcon
-                      icon={
-                        CategoryIcons[iconName as keyof typeof CategoryIcons]
-                      }
-                    />
-                  </button>
-                ))}
+                {Object.entries(CategoryIcons)
+                  .filter(
+                    ([key, icon], index, self) =>
+                      // 最初の出現のみを残す
+                      index ===
+                      self.findIndex(([, otherIcon]) => otherIcon === icon)
+                  )
+                  .map(([iconName, icon]) => (
+                    <button
+                      key={iconName}
+                      onClick={() => setNewCategoryIcon(iconName)}
+                      className={`rounded p-2 ${
+                        newCategoryIcon === iconName
+                          ? "bg-indigo-500 text-white"
+                          : "bg-gray-200 text-gray-700"
+                      }`}
+                    >
+                      <FontAwesomeIcon icon={icon} />
+                    </button>
+                  ))}
               </div>
             </div>
             <div className="flex justify-end space-x-2">
